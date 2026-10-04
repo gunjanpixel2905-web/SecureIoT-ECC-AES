@@ -14,7 +14,7 @@ import {
 
 import "./App.css";
 
-const API = "http://127.0.0.1:5000";
+const API = "https://secureiot-ecc-aes.onrender.com";
 
 function App() {
   const [status, setStatus] = useState(null);
