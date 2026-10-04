@@ -17,7 +17,6 @@ def get_connection():
 
 
 def initialize_database():
-
     connection = get_connection()
 
     connection.execute("""
@@ -41,10 +40,15 @@ def initialize_database():
         )
     """)
 
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS processed_messages (
+            message_id TEXT PRIMARY KEY,
+            timestamp TEXT
+        )
+    """)
+
     connection.commit()
     connection.close()
-
-
 def log_security_event(event, status, details):
 
     connection = get_connection()
@@ -102,3 +106,4 @@ def is_message_replayed(message_id, timestamp):
 
     finally:
         connection.close()
+    
