@@ -233,50 +233,44 @@ def secure_device_data():
 # --------------------------------------------------
 # REPLAY ATTACK DEMONSTRATION
 # --------------------------------------------------
-
 @app.route("/api/security/replay-test")
 def replay_test():
-
     try:
-
-        # Fixed message represents a captured old message
-        message_id = "REPLAY-DEMO-001"
+        message_id = "REPLAY-DEMO-" + str(uuid.uuid4())
         timestamp = "2026-10-05T18:00:00"
 
-        # First transmission
+        # First message: accepted
         first_check = is_message_replayed(
             message_id,
             timestamp
         )
 
         if first_check:
-
             return jsonify({
                 "success": False,
                 "message": "Replay test setup failed"
             }), 500
 
-        # Same message transmitted again
+        # Same message sent again: should be detected
         second_check = is_message_replayed(
             message_id,
             timestamp
         )
 
         if second_check:
-
             log_security_event(
                 "REPLAY_ATTACK",
                 "BLOCKED",
-                "Duplicate message detected during replay attack simulation"
+                f"Duplicate message detected during replay attack simulation: {message_id}"
             )
 
             return jsonify({
                 "success": True,
                 "message": "Replay attack detected and blocked",
+                "message_id": message_id,
                 "security": {
                     "attack": "REPLAY ATTACK",
-                    "replay_protection": "BLOCKED",
-                    "message_id": message_id
+                    "replay_protection": "BLOCKED"
                 }
             })
 
@@ -286,6 +280,11 @@ def replay_test():
         }), 500
 
     except Exception as e:
+        log_security_event(
+            "REPLAY_ATTACK",
+            "FAILED",
+            str(e)
+        )
 
         return jsonify({
             "success": False,
@@ -293,7 +292,7 @@ def replay_test():
             "error": str(e)
         }), 500
 
-
+    
 # --------------------------------------------------
 # SENSOR HISTORY
 # --------------------------------------------------
