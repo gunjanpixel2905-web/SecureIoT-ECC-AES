@@ -68,27 +68,44 @@ function App() {
     }
   };
 
-  const generateSecureReading = async () => {
-    try {
-      setLoading(true);
+ const generateSecureReading = async () => {
+  console.log("Generate Secure Reading button clicked");
 
-      const response = await axios.get(
-        `${API}/api/device/data`
-      );
+  try {
+    setLoading(true);
 
-      if (response.data.success) {
-        setSecureMessages((prev) => prev + 1);
-        setLastSecurityEvent(
-          "Secure IoT message transmitted successfully"
-        );
+    console.log("Calling:", `${API}/api/device/data`);
+
+    const response = await axios.get(
+      `${API}/api/device/data`,
+      {
+        timeout: 30000,
       }
+    );
 
-      await fetchData();
-    } catch (error) {
-      console.error("Secure reading error:", error);
-      setLoading(false);
+    console.log("Secure reading response:", response.data);
+
+    if (response.data.success) {
+      setSecureMessages((prev) => prev + 1);
+
+      setLastSecurityEvent(
+        "Secure IoT message transmitted successfully"
+      );
     }
-  };
+
+    await fetchData();
+
+  } catch (error) {
+    console.error("Secure reading error:", error);
+
+    setLastSecurityEvent(
+      "Secure reading failed"
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchData();
