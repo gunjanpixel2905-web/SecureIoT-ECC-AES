@@ -71,8 +71,39 @@ function App() {
   const generateSecureReading = async () => {
   console.log("Generate Secure Reading button clicked");
 
-  try {} catch (error) {
+  try {
+    setLoading(true);
+
+    const url = `${API}/api/device/data`;
+
+    console.log("Calling:", url);
+
+    const response = await axios.get(url, {
+      timeout: 30000,
+    });
+
+    console.log("Secure reading response:", response.data);
+
+    if (response.data.success) {
+      setSecureMessages((prev) => prev + 1);
+
+      setLastSecurityEvent(
+        "Secure IoT message transmitted successfully"
+      );
+    }
+
+    await fetchData();
+
+  } catch (error) {
     console.error("Secure reading error:", error);
+
+    if (error.response) {
+      console.error("Backend response:", error.response.data);
+    } else if (error.request) {
+      console.error("No response received from backend");
+    } else {
+      console.error("Request error:", error.message);
+    }
 
     setLastSecurityEvent(
       "Secure reading failed"
@@ -341,12 +372,13 @@ const simulateTampering = async () => {
             </div>
 
             <button
-              className="primary-button"
-              onClick={generateSecureReading}
-            >
-              <span>+</span>
-              Generate Secure Reading
-            </button>
+  type="button"
+  className="primary-button"
+  onClick={generateSecureReading}
+>
+  <span>+</span>
+  Generate Secure Reading
+</button>
             <div className="attack-buttons">
 
   <button
