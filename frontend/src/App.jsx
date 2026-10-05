@@ -68,39 +68,81 @@ function App() {
     }
   };
 
- const generateSecureReading = async () => {
+  const generateSecureReading = async () => {
   console.log("Generate Secure Reading button clicked");
 
-  try {
-    setLoading(true);
-
-    console.log("Calling:", `${API}/api/device/data`);
-
-    const response = await axios.get(
-      `${API}/api/device/data`,
-      {
-        timeout: 30000,
-      }
-    );
-
-    console.log("Secure reading response:", response.data);
-
-    if (response.data.success) {
-      setSecureMessages((prev) => prev + 1);
-
-      setLastSecurityEvent(
-        "Secure IoT message transmitted successfully"
-      );
-    }
-
-    await fetchData();
-
-  } catch (error) {
+  try {} catch (error) {
     console.error("Secure reading error:", error);
 
     setLastSecurityEvent(
       "Secure reading failed"
     );
+
+  } finally {
+    setLoading(false);
+  }
+};
+  const simulateReplayAttack = async () => {
+  try {
+    setLoading(true);
+
+    const response = await axios.get(
+      `${API}/api/security/replay-test`,
+      {
+        timeout: 30000,
+      }
+    );
+
+    console.log("Replay attack response:", response.data);
+
+    setLastSecurityEvent(
+      response.data.message || "Replay attack detected and blocked"
+    );
+
+    await fetchData();
+
+  } catch (error) {
+    console.error("Replay attack test error:", error);
+
+    setLastSecurityEvent(
+      error.response?.data?.message || "Replay attack test failed"
+    );
+
+    await fetchData();
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+const simulateTampering = async () => {
+  try {
+    setLoading(true);
+
+    const response = await axios.get(
+      `${API}/api/security/tamper-test`,
+      {
+        timeout: 30000,
+      }
+    );
+
+    console.log("Tampering response:", response.data);
+
+    setLastSecurityEvent(
+      response.data.message || "Tampering detected and blocked"
+    );
+
+    await fetchData();
+
+  } catch (error) {
+    console.error("Tampering test error:", error);
+
+    setLastSecurityEvent(
+      error.response?.data?.message || "Tampering test failed"
+    );
+
+    await fetchData();
 
   } finally {
     setLoading(false);
@@ -305,6 +347,23 @@ function App() {
               <span>+</span>
               Generate Secure Reading
             </button>
+            <div className="attack-buttons">
+
+  <button
+    className="attack-button replay-button"
+    onClick={simulateReplayAttack}
+  >
+    🔁 Simulate Replay Attack
+  </button>
+
+  <button
+    className="attack-button tamper-button"
+    onClick={simulateTampering}
+  >
+    ⚠ Simulate Tampering
+  </button>
+
+</div>
 
           </div>
 

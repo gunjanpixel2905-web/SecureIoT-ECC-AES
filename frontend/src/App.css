@@ -1766,3 +1766,35 @@ td strong {
   }
 
 }
+.attack-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.attack-button {
+  border: 1px solid #263247;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #111827;
+  color: #ffffff;
+  transition: 0.2s ease;
+}
+
+.attack-button:hover {
+  transform: translateY(-1px);
+}
+
+.replay-button {
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.tamper-button {
+  border-color: #ef4444;
+  color: #f87171;
+}
